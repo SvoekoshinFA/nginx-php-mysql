@@ -1,0 +1,30 @@
+version: "3.9"
+   
+services:
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./mysql.data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    depends_on:
+      - php
+
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/usr/share/nginx/www
+      - ./nginx.conf:/etc/nginx/conf.d
+    depends_on:
+      - php
+
+  php:
+    build : ./php.conf
+    volumes:
+      - ./app:/usr/share/nginx/www
+      - ./php.conf:/usr/local/etc/php/conf.d
+    command: php-fpm
